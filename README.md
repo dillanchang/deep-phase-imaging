@@ -27,14 +27,11 @@ python3 -m venv venv
 source venv/bin/activate
 ```
 
-Necessary packages for compiling the source codes can be installed using
+Necessary packages for running the source codes can be installed using
 
 ```shell
 python -m pip install numpy scipy pandas h5py image matplotlib==2.2.5 tensorflow-gpu==2.3.0
 ```
-
-Diffraction pattern, position, and probe data can be found [here](no_url_yet).
-The zipped file contains the same directory structure so they can be merged.
 
 # Introduction
 
@@ -50,19 +47,19 @@ convolutional neural network.
 
 Mathematically, this forward process relates the object function and the
 measurement by
-<p align="center">
-<img src="https://latex.codecogs.com/svg.latex?&space;M(k)=\left| F( P(r) \cdot O(r) ) \right|">
-</p>
-where M(k) is the amplitude of the Fourier transform (F), P(r) and O(r) are the
-complex probe and object function, respectively. Since the phase of the Fourier
-transform is lost during measurement, the inverse of this forward process is
-nonlinear. Furthermore, noise from counting statistics and detectors corrupts
-the measurements, rendering the inverse process difficult.  
+
+$$M(k)=\left| F( P(r) \cdot O(r) ) \right|$$
+
+where $M(k)$ is the amplitude of the Fourier transform $(F)$, $P(r)$ and $O(r)$
+are the complex probe and object function, respectively. Since the phase of the
+Fourier transform is lost during measurement, the inverse of this forward
+process is nonlinear. Furthermore, noise from counting statistics and detectors
+corrupts the measurements, rendering the inverse process difficult.  
 
 # Training Neural Network
 Executing
 ```shell
-python 0_train-cnn/src/train_cnn.py
+python 0_train-cnn/train_cnn.py
 ```
 will begin training the neural network, taking a probe function and a database
 of random stock images as inputs.
@@ -75,8 +72,8 @@ function to produce an exit wave.
 </p>
 
 The square root of the noisy diffraction intensity was used to train CNNs with
-an L1-norm loss function to recover the phases in the illuminated area, which
-is output as mask.npy after the training is complete.
+an L1-norm loss function to recover the phases in the illuminated area. This
+illuminated area is created and stored in `./0_train-cnn/output/mask.npy`.
 <p align="center">
   <img src="./figures/train.png" width="60%"></center>
 </p>
@@ -87,22 +84,24 @@ is output as mask.npy after the training is complete.
 In our experience, using randomly generated stock photos from the internet
 provided a rich source of entropy within the images to sufficiently train the
 CNNs without imposing any regularizations. More examples of phase image
-generation, forward process and CNN performance as validation data can be found
+generation, forward process and CNN performance on validation data can be found
 below:
 <p align="center">
   <img src="./figures/sample_gen.png" width="80%"></center>
 </p>
 
 The trained CNN can now be used to directly map from the amplitudes of the
-Fourier transform to phase patches without any iterative methods.
+Fourier transform to phase patches without any iterative methods. During the
+training process, weights at every iteration are stored as
+`./0_train-cnn/output/weights/XXX.hdf5`.
 
 # Predicting Phase Images and Stitching
 Run
 ```shell
-python 1_phase-recon/src/phase_recon.py
+python 1_phase-recon/phase_recon.py
 ```
 to perform phase reconstruction from experimental hBN 4D STEM data using one of
-the trained weights from the procedure above.
+the trained weights from the procedure above (taken at 20th iteration).
 
 As the zero frequency of the phase is irrecoverable from the CNN, two adjacent
 recovered phases differ in the overlapped region by an overall phase shift.
@@ -112,7 +111,7 @@ phase image.
   <img src="./figures/stitch.png" width="60%"></center>
 </p>
 
-The implementation of the algorithm can be found in ``phase_recon.py``, and a
+The implementation of the algorithm can be found in `phase_recon.py`, and a
 well-stitched phase image usually requires only a few iterations.
 ```python
 def stitch(objs_pred,pos,mask,num_iter,alpha):
@@ -137,7 +136,8 @@ def stitch(objs_pred,pos,mask,num_iter,alpha):
 ```
 
 # Results
-After ``phase_recon.py`` completes, a stitched reconstruction of hBN will appear.
+After `phase_recon.py` completes, a stitched reconstruction of hBN will appear
+and be stored in `./1_phase-recon/output/recon.npy`.
 <p align="center">
   <img src="./figures/hbn_final.png" width="80%"></center>
 </p>
