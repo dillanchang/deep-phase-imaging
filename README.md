@@ -1,4 +1,4 @@
-# Deep Learning Electron Diffraction Imaging
+# Deep Learning Electron Diffractive Imaging
 
 This repository is a tutorial for training a convolutional neural network (CNN)
 that can perform end-to-end electron phase imaging from 4D STEM diffraction
