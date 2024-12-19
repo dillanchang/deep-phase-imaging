@@ -6,7 +6,7 @@ data. This tutorial contains experimental hexagonal Boron Nitride (hBN) 4D data
 as an example. A detailed manuscript for this project can be found
 [here](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.130.016101).
 
-If there are issues with downloading the input files from LFS, the input files can be found [here](https://drive.google.com/drive/folders/12nNB5n-v5GIBEmmBy7JW9ob3wYYL63tj?usp=sharing).
+If there are issues with downloading the input files from LFS, the input files can be found [here](https://drive.google.com/drive/folders/1OJTM_cnpVte20gd0Rpy5YfSqU30w1IL0?usp=drive_link).
 
 <p align="center">
   <img src="./figures/hbn.png" width="60%"></center>
